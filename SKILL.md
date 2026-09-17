@@ -258,7 +258,25 @@ Do not claim that review completed if:
 
 ## 7.3 Select Solar Pro 4
 
-Use Freebuff's available model-selection mechanism to select:
+Prefer the explicit config command (matches Freebuff setup):
+
+```bash
+freebuff config set model solar-pro4
+```
+
+Equivalent accepted value:
+
+```bash
+freebuff config set model upstage/solar-pro4
+```
+
+If config is unavailable, use another Freebuff model-selection mechanism:
+
+* CLI option;
+* settings file;
+* interactive/session model picker.
+
+Always select:
 
 ```text
 solar-pro4
@@ -269,13 +287,6 @@ or:
 ```text
 upstage/solar-pro4
 ```
-
-The selection mechanism may be:
-
-* CLI option;
-* configuration;
-* settings;
-* interactive/session model picker.
 
 When Freebuff exposes the active model, verify that the review is actually running with Solar Pro 4.
 
