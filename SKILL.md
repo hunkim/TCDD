@@ -256,51 +256,54 @@ Do not claim that review completed if:
 
 ---
 
-## 7.3 Select Solar Pro 4
+## 7.3 Select Solar Pro 4 (REQUIRED — do this every TCDD review)
 
-Required model id:
+Freebuff CLI does **not** provide `freebuff config set model` in current installs.
+The real switch is the JSON key **`freebuffModel`**.
 
-```text
-solar-pro4
+### Exact SET (run before every Freebuff review)
+
+```bash
+python3 <<'PY'
+import json
+from pathlib import Path
+
+p = Path.home() / ".config/manicode/settings.json"
+p.parent.mkdir(parents=True, exist_ok=True)
+data = json.loads(p.read_text()) if p.exists() else {}
+data["freebuffModel"] = "upstage/solar-pro4"
+p.write_text(json.dumps(data, indent=2) + "\n")
+print("freebuffModel =", data["freebuffModel"])
+PY
 ```
 
-or provider-qualified:
+Accepted values:
 
 ```text
 upstage/solar-pro4
+solar-pro4
 ```
 
-**How to select (use what this Freebuff install actually supports):**
+Prefer **`upstage/solar-pro4`** (what Freebuff stores).
 
-1. **Preferred — settings file** (current Freebuff CLI has no `config set` subcommand):
+### Exact VERIFY (must pass before starting Freebuff)
 
 ```bash
-# ~/.config/manicode/settings.json
-# set: "freebuffModel": "upstage/solar-pro4"
+python3 -c "import json;from pathlib import Path;m=json.loads((Path.home()/'.config/manicode/settings.json').read_text())['freebuffModel'];print(m);assert m in ('upstage/solar-pro4','solar-pro4'), m"
 ```
 
-Verify before review:
-
-```bash
-python3 -c "import json;print(json.load(open('$HOME/.config/manicode/settings.json'))['freebuffModel'])"
-```
-
-2. **Or** interactive/session model picker inside Freebuff UI.
-3. **Or** any CLI option Freebuff exposes in your installed version.
-
-Do **not** invent CLI commands that `freebuff --help` does not list.
-
-When Freebuff exposes the active model, verify Solar Pro 4 is selected.
-
-If a setup poster shows `freebuff config set model …` but your CLI rejects it, use the settings-file method above and continue — do not stop solely because a poster command is missing.
-
-If Solar Pro 4 cannot be selected or verified:
+If verify fails or prints any other model:
 
 **STOP THE REVIEW GATE.**
 
-Do not silently fall back to another model.
+- Do not start Freebuff.
+- Do not silently use another model.
+- Report the blocker; TCDD is incomplete.
 
-Report the blocker if it cannot be resolved.
+### Optional UI check
+
+If Freebuff UI shows the active model, confirm Solar Pro 4 / `solar-pro4` / `upstage/solar-pro4`.
+Settings-file verify above is still required.
 
 ---
 
