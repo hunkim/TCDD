@@ -8,43 +8,46 @@
 
 ## Agent skill
 
-Use [`SKILL.md`](./SKILL.md) as the agent skill. It is written so an AI can execute the loop without guessing:
-
-1. Baseline tests
-2. Smallest correct code change
-3. Add/update tests
-4. Tests green
-5. Freebuff / **Solar Pro 4** review → `FREEBUFF_CODE_REVIEW.md`
-6. Verify findings against real code
-7. Apply sensible findings
-8. Re-test (and re-review if code changed)
+Use [`SKILL.md`](./SKILL.md). Written so an AI can execute the loop without guessing.
 
 **DONE** only when latest tests are green **and** a current-batch Solar Pro 4 Freebuff review is complete.
 
 ## Freebuff + Solar Pro 4 setup
 
-Solar Pro 4 reviews are free. Follow this setup:
-
 ![Freebuff Solar Pro 4 setup](diagrams/freebuff-solar-pro4-setup.png)
 
+### Exact model setting (critical)
+
+Current Freebuff CLI has **no** `freebuff config set model`. Set:
+
 ```bash
-# 1. Install
-freebuff --version || npm install -g freebuff
-export PATH="$HOME/.local/bin:$PATH"
-
-# 2. Login
-freebuff login
-
-# 3. Select Solar Pro 4 (required — do not silently use another model)
-# Current Freebuff CLI: set ~/.config/manicode/settings.json
-#   "freebuffModel": "upstage/solar-pro4"
-# (If a poster shows `freebuff config set model`, ignore it when your CLI has no such command.)
-
-# 4. Run review from repo root (interactive session)
-freebuff --cwd <repo>
-
-# 5. Persist review as FREEBUFF_CODE_REVIEW.md for THIS batch
+python3 <<'PY'
+import json
+from pathlib import Path
+p = Path.home() / ".config/manicode/settings.json"
+p.parent.mkdir(parents=True, exist_ok=True)
+data = json.loads(p.read_text()) if p.exists() else {}
+data["freebuffModel"] = "upstage/solar-pro4"
+p.write_text(json.dumps(data, indent=2) + "\n")
+print(data["freebuffModel"])
+PY
 ```
+
+Verify (must print `upstage/solar-pro4` or `solar-pro4`):
+
+```bash
+python3 -c "import json;from pathlib import Path;print(json.loads((Path.home()/'.config/manicode/settings.json').read_text())['freebuffModel'])"
+```
+
+Then:
+
+```bash
+freebuff --version || npm install -g freebuff
+freebuff login   # if needed
+freebuff --cwd <repo>
+```
+
+Persist the review as `FREEBUFF_CODE_REVIEW.md` for **this** batch.
 
 ## License
 
