@@ -1,54 +1,106 @@
 # TCDD — Test × CodeReview Driven Development
 
-**TCDD** is a mandatory loop for every non-trivial code change.
+**Drop this repo into your agent skills (or clone it) and run the loop.**
 
 **Tests gate code changes. Solar Pro 4 review gates DONE.**
 
 ![TCDD poster](diagrams/tcdd-poster-v2.png)
 
-## Agent skill
+## What you get
 
-Use [`SKILL.md`](./SKILL.md). Written so an AI can execute the loop without guessing.
+| Path | Purpose |
+|------|---------|
+| [`SKILL.md`](./SKILL.md) | Full TCDD agent skill (copy into Cursor / Grok Bot skills) |
+| [`skills/freebuff-post-change-review/SKILL.md`](./skills/freebuff-post-change-review/SKILL.md) | Companion Freebuff review skill |
+| [`scripts/set_freebuff_solar_pro4.py`](./scripts/set_freebuff_solar_pro4.py) | Force Freebuff → Solar Pro 4 |
+| [`scripts/verify_freebuff_solar_pro4.py`](./scripts/verify_freebuff_solar_pro4.py) | Fail if model is not Solar Pro 4 |
+| [`scripts/install_skill.sh`](./scripts/install_skill.sh) | Install skills into agent skills folder |
+| [`templates/FREEBUFF_CODE_REVIEW.md`](./templates/FREEBUFF_CODE_REVIEW.md) | Review output template |
+| [`templates/manicode.settings.example.json`](./templates/manicode.settings.example.json) | Example Freebuff settings |
+| [`diagrams/`](./diagrams/) | TCDD poster + Freebuff setup diagram |
 
-**DONE** only when latest tests are green **and** a current-batch Solar Pro 4 Freebuff review is complete.
+## Quick start (anyone)
 
-## Freebuff + Solar Pro 4 setup
+```bash
+git clone https://github.com/hunkim/TCDD.git
+cd TCDD
+
+# 1) Install agent skills
+bash scripts/install_skill.sh
+# or: bash scripts/install_skill.sh /path/to/your/skills/tcdd-test-codereview-driven-development
+
+# 2) Install Freebuff CLI (if needed)
+freebuff --version || npm install -g freebuff
+export PATH="$HOME/.local/bin:$PATH"
+freebuff login   # once
+
+# 3) Force Solar Pro 4 (REQUIRED before every review)
+python3 scripts/set_freebuff_solar_pro4.py
+python3 scripts/verify_freebuff_solar_pro4.py
+
+# 4) Run TCDD on your project
+#    baseline tests → code → tests → freebuff --cwd <your-repo> → apply → retest
+```
+
+## Freebuff + Solar Pro 4 (critical)
 
 ![Freebuff Solar Pro 4 setup](diagrams/freebuff-solar-pro4-setup.png)
 
-### Exact model setting (critical)
+Freebuff CLI **does not** ship `freebuff config set model` in current versions.
 
-Current Freebuff CLI has **no** `freebuff config set model`. Set:
+The real setting is:
 
-```bash
-python3 <<'PY'
-import json
-from pathlib import Path
-p = Path.home() / ".config/manicode/settings.json"
-p.parent.mkdir(parents=True, exist_ok=True)
-data = json.loads(p.read_text()) if p.exists() else {}
-data["freebuffModel"] = "upstage/solar-pro4"
-p.write_text(json.dumps(data, indent=2) + "\n")
-print(data["freebuffModel"])
-PY
+```text
+~/.config/manicode/settings.json
+  "freebuffModel": "upstage/solar-pro4"
 ```
 
-Verify (must print `upstage/solar-pro4` or `solar-pro4`):
+Accepted values: `upstage/solar-pro4` or `solar-pro4`.
+
+**Always SET + VERIFY before Freebuff.** If verify fails → stop. Do not review with another model.
 
 ```bash
-python3 -c "import json;from pathlib import Path;print(json.loads((Path.home()/'.config/manicode/settings.json').read_text())['freebuffModel'])"
+python3 scripts/set_freebuff_solar_pro4.py
+python3 scripts/verify_freebuff_solar_pro4.py
 ```
 
 Then:
 
 ```bash
-freebuff --version || npm install -g freebuff
-freebuff login   # if needed
-freebuff --cwd <repo>
+freebuff --cwd <your-repo>
 ```
 
-Persist the review as `FREEBUFF_CODE_REVIEW.md` for **this** batch.
+Save the review as `FREEBUFF_CODE_REVIEW.md` for **this** batch (template included).
+
+## TCDD loop (short)
+
+1. Baseline tests  
+2. Smallest correct code change  
+3. Add/update tests  
+4. Tests green  
+5. Freebuff / **Solar Pro 4** review → `FREEBUFF_CODE_REVIEW.md`  
+6. Verify findings against real code  
+7. Apply sensible P0/P1/(valid P2)  
+8. Re-test; re-review if code changed  
+
+**DONE** = latest tests green **AND** current-batch Solar Pro 4 Freebuff review complete.
+
+Full rules: [`SKILL.md`](./SKILL.md).
+
+## Agent install (manual)
+
+Copy files:
+
+```text
+SKILL.md
+  → <skills>/tcdd-test-codereview-driven-development/SKILL.md
+
+skills/freebuff-post-change-review/SKILL.md
+  → <skills>/freebuff-post-change-review/SKILL.md
+```
+
+Keep `scripts/` available (or copy them next to the skill) so SET/VERIFY commands work.
 
 ## License
 
-MIT
+MIT — see [LICENSE](./LICENSE)

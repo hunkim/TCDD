@@ -263,6 +263,15 @@ The real switch is the JSON key **`freebuffModel`**.
 
 ### Exact SET (run before every Freebuff review)
 
+From this repo (preferred):
+
+```bash
+python3 scripts/set_freebuff_solar_pro4.py
+python3 scripts/verify_freebuff_solar_pro4.py
+```
+
+Or inline:
+
 ```bash
 python3 <<'PY'
 import json
@@ -289,6 +298,8 @@ Prefer **`upstage/solar-pro4`** (what Freebuff stores).
 ### Exact VERIFY (must pass before starting Freebuff)
 
 ```bash
+python3 scripts/verify_freebuff_solar_pro4.py
+# or:
 python3 -c "import json;from pathlib import Path;m=json.loads((Path.home()/'.config/manicode/settings.json').read_text())['freebuffModel'];print(m);assert m in ('upstage/solar-pro4','solar-pro4'), m"
 ```
 
