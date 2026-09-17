@@ -1,40 +1,33 @@
 # TCDD — Test × CodeReview Driven Development
 
-**TCDD** is a mandatory loop for every non-trivial code change:
+**TCDD** is a mandatory loop for every non-trivial code change.
 
-**tests → code → tests → Freebuff (`solar-pro4`) review → apply sensible findings → retest**
-
-Tests gate edits. Freebuff gates “done.” Never skip the review step after a change batch.
+**Tests gate code changes. Solar Pro 4 review gates DONE.**
 
 ![TCDD poster](diagrams/tcdd-poster-v2.png)
 
 ## Agent skill
 
-Copy [`SKILL.md`](./SKILL.md) into your agent skills folder (for example Cursor / Grok Bot workflows), or point your agent at this repo.
-
-Frontmatter:
-
-- **name:** `TCDD Test CodeReview Driven Development`
-- **description:** MANDATORY full TCDD loop with Freebuff `solar-pro4`
-
-## Loop (short)
+Use [`SKILL.md`](./SKILL.md) as the agent skill. It is written so an AI can execute the loop without guessing:
 
 1. Baseline tests  
-2. Code change  
+2. Smallest correct code change  
 3. Add/update tests  
-4. Re-run until green  
-5. Freebuff whole-repo review → `FREEBUFF_CODE_REVIEW.md`  
-6. Apply sensible P0/P1 (and valid P2)  
-7. Re-test; repeat 5–7 as needed  
-8. Done only when tests are green **and** Freebuff ran this batch  
+4. Tests green  
+5. Freebuff / **Solar Pro 4** review → `FREEBUFF_CODE_REVIEW.md`  
+6. Verify findings against real code  
+7. Apply sensible findings  
+8. Re-test (and re-review if code changed)  
 
-## Freebuff
+**DONE** only when latest tests are green **and** a current-batch Solar Pro 4 Freebuff review is complete.
+
+## Install Freebuff
 
 ```bash
 npm install -g freebuff
 freebuff login
 freebuff --cwd <repo>
-# pick Solar Pro 4 / upstage/solar-pro4
+# select solar-pro4 / upstage/solar-pro4
 ```
 
 ## License
