@@ -36,10 +36,11 @@ export PATH="$HOME/.local/bin:$PATH"
 freebuff login
 
 # 3. Select Solar Pro 4 (required — do not silently use another model)
-freebuff config set model solar-pro4
-# equivalent: upstage/solar-pro4
+# Current Freebuff CLI: set ~/.config/manicode/settings.json
+#   "freebuffModel": "upstage/solar-pro4"
+# (If a poster shows `freebuff config set model`, ignore it when your CLI has no such command.)
 
-# 4. Run review from repo root
+# 4. Run review from repo root (interactive session)
 freebuff --cwd <repo>
 
 # 5. Persist review as FREEBUFF_CODE_REVIEW.md for THIS batch
