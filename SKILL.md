@@ -258,37 +258,41 @@ Do not claim that review completed if:
 
 ## 7.3 Select Solar Pro 4
 
-Prefer the explicit config command (matches Freebuff setup):
-
-```bash
-freebuff config set model solar-pro4
-```
-
-Equivalent accepted value:
-
-```bash
-freebuff config set model upstage/solar-pro4
-```
-
-If config is unavailable, use another Freebuff model-selection mechanism:
-
-* CLI option;
-* settings file;
-* interactive/session model picker.
-
-Always select:
+Required model id:
 
 ```text
 solar-pro4
 ```
 
-or:
+or provider-qualified:
 
 ```text
 upstage/solar-pro4
 ```
 
-When Freebuff exposes the active model, verify that the review is actually running with Solar Pro 4.
+**How to select (use what this Freebuff install actually supports):**
+
+1. **Preferred — settings file** (current Freebuff CLI has no `config set` subcommand):
+
+```bash
+# ~/.config/manicode/settings.json
+# set: "freebuffModel": "upstage/solar-pro4"
+```
+
+Verify before review:
+
+```bash
+python3 -c "import json;print(json.load(open('$HOME/.config/manicode/settings.json'))['freebuffModel'])"
+```
+
+2. **Or** interactive/session model picker inside Freebuff UI.
+3. **Or** any CLI option Freebuff exposes in your installed version.
+
+Do **not** invent CLI commands that `freebuff --help` does not list.
+
+When Freebuff exposes the active model, verify Solar Pro 4 is selected.
+
+If a setup poster shows `freebuff config set model …` but your CLI rejects it, use the settings-file method above and continue — do not stop solely because a poster command is missing.
 
 If Solar Pro 4 cannot be selected or verified:
 
